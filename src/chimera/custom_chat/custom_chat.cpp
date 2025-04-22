@@ -22,7 +22,6 @@
 #include "../config/ini.hpp"
 #include "../localization/localization.hpp"
 #include "../console/console.hpp"
-#include "../console/console.cpp"
 #include "../halo_data/chat.hpp"
 #include "emoji_map.hpp"
 
@@ -708,7 +707,6 @@ namespace Chimera {
     const char* console_text = get_console_text();
     if (console_text) {
         chat_input_buffer = console_text; // 初始化聊天输入缓冲区为 console_text 内容
-        chat_input_cursor = std::strlen(console_text); // 光标位置同步到缓冲区末尾
     }
 
 ///结束
