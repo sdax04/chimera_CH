@@ -820,7 +820,7 @@ namespace Chimera {
                         }
                     }
                 }
-            /*		    
+          	    
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
@@ -838,21 +838,8 @@ namespace Chimera {
                     }
 
                 }
-		*/    
+		 
 		    
-
-if (!inserted_emoji) {
-    if (character >= 0x80) { 
-        // 中文字符，存入 `temp_input_string`
-        temp_input_string += character;
-	chat_input_buffer.insert(chat_input_cursor, temp_input_string); // 插入完整的中文字符串
-        chat_input_cursor += temp_input_string.length(); // 更新光标位置
-    } 
-    else {
-        // 英文或符号，直接插入 `chat_input_buffer`
-        chat_input_buffer.insert(chat_input_cursor++, 1, character);
-    }
-}
 
 
 
