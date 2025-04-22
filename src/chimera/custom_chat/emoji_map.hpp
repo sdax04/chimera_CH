@@ -2045,6 +2045,7 @@ namespace Chimera {
         {u8"zipper_mouth_face", u8"🤐"},
         {u8"zombie", u8"🧟"},
         {u8"zzz", u8"💤"},
+        {u8"nihao", u8"你好世界"},
     };
 }
 #endif
