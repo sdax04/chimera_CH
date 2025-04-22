@@ -31,7 +31,18 @@ extern "C" void on_multiplayer_message(const wchar_t *message);
 extern "C" void on_chat_message(const wchar_t *message);
 extern "C" void on_chat_button(int channel);
 extern "C" void on_kill_feed(wchar_t *a, std::uint32_t b, wchar_t *c);
-extern "C" void bring_up_chat_prompt(int channel) {
+const void *kill_feed_message;
+
+
+namespace Chimera {
+    static void on_custom_chat_frame() noexcept;
+    static void on_chat_input() noexcept;
+    static void enable_input(bool enabled) noexcept;
+    static bool custom_chat_initialized = false;
+    static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use);
+    static void check_for_quit_players();
+    static void load_chat_settings();
+	extern "C" void bring_up_chat_prompt(int channel) {
     if (chat_input_open) {
         return;
     }
@@ -70,18 +81,6 @@ static void updateIMEComposition() {
         }
     }
 }
-const void *kill_feed_message;
-
-
-namespace Chimera {
-    static void on_custom_chat_frame() noexcept;
-    static void on_chat_input() noexcept;
-    static void enable_input(bool enabled) noexcept;
-    static bool custom_chat_initialized = false;
-    static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use);
-    static void check_for_quit_players();
-    static void load_chat_settings();
-
 
     static HWND g_IMEWnd = nullptr;//XINJIA
 // 创建一个隐藏的、用于 IME 接收的窗口
