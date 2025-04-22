@@ -417,9 +417,7 @@ namespace Chimera {
                 if(draw_shadow) {
                     override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
                 }
-               std::string utf8_text = WideToUTF8(wide_text);
-                override_font->DrawText(NULL, utf8_text.c_str(), -1, &rect, align, color);//修改费
-
+                    override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
             }
             else {
                 // Some cheap and nasty hackery to stop DrawText stripping the spaces of the end of chapter titles.
@@ -626,19 +624,9 @@ namespace Chimera {
                 x += static_cast<std::int16_t>(widescreen_width_480p / 2.0f);
                 break;
         }
-
-   
-
-
-std::wstring wide_text;
-if (auto *u8 = std::get_if<std::string>(&text)) {
-    wide_text = UTF8ToWide(*u8); // 使用新转换函数
-} else if (auto *u16 = std::get_if<std::wstring>(&text)) {
-    wide_text = *u16;
-}
-
-
-
+            auto *u8 = std::get_if<std::string>(&text);
+            auto *u16 = std::get_if<std::wstring>(&text);
+        
         #define handle_formatting_call(what) handle_formatting(*what, x, y, width, height, alignment, font)
 
         if(u8) {
