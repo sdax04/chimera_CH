@@ -775,6 +775,7 @@ namespace Chimera {
                 else if(key_code == 0x38) {
                     if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
                         chat_out(chat_input_channel, chat_input_buffer.c_str());
+			console_output("玩家发送消息: %s", chat_input_buffer.c_str()); // 将聊天内容打印到控制台
                     }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
