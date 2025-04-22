@@ -1,10 +1,8 @@
 // SPDX-License-Identifier: GPL-3.0-only
 
 #include <windows.h>
-#include <imm.h>
 #include <chrono>
 #include <cstring>
-#include <string>
 #include <locale>
 #include <codecvt>
 #include <cwchar>
@@ -33,7 +31,6 @@ extern "C" void on_chat_button(int channel);
 extern "C" void on_kill_feed(wchar_t *a, std::uint32_t b, wchar_t *c);
 const void *kill_feed_message;
 
-
 namespace Chimera {
     static void on_custom_chat_frame() noexcept;
     static void on_chat_input() noexcept;
@@ -42,88 +39,7 @@ namespace Chimera {
     static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use);
     static void check_for_quit_players();
     static void load_chat_settings();
-	extern "C" void bring_up_chat_prompt(int channel) {
-    if (chat_input_open) {
-        return;
-    }
-    chat_input_open = true;
-    chat_input_buffer.clear();
-    chat_input_cursor = 0;
-    chat_input_channel = channel;
-    chat_open_state_changed = clock::now();
-    enable_input(false);
-    
-    // 如果没有可用的 IME 窗口，则创建一个隐藏的 IME 窗口
-    if (g_IMEWnd == nullptr) {
-        g_IMEWnd = CreateDummyIMEWindow();
-    }
-}
-// 将宽字符串转换为 UTF-8 的实用函数
-std::string ConvertWideToUTF8(const std::wstring& ws) {
-    std::wstring_convert<std::codecvt_utf8_utf16<wchar_t>> converter;
-    return converter.to_bytes(ws);
-}
-
-// 每帧或在 on_chat_input 中调用，更新 IME 合成内容
-static void updateIMEComposition() {
-    // 如果存在 IME 窗口，尝试获取合成中的文本
-    if (g_IMEWnd) {
-        std::wstring imeText = GetIMEComposition(g_IMEWnd);
-        if (!imeText.empty()) {
-            // 转换为 UTF-8
-            std::string utf8Text = ConvertWideToUTF8(imeText);
-            // 插入到聊天输入缓冲区中（假设在当前光标位置插入）
-            chat_input_buffer.insert(chat_input_cursor, utf8Text);
-            chat_input_cursor += utf8Text.size();
-            // 如果需要，清除 IME 合成字符串——这取决于你的具体逻辑
-            // 注意：调用 GetIMEComposition 后，IME 可能仍然保留合成状态，
-            // 你可能需要在收到 WM_IME_ENDCOMPOSITION 或用户确认输入时执行下一步处理。
-        }
-    }
-}
-
-    static HWND g_IMEWnd = nullptr;//XINJIA
-// 创建一个隐藏的、用于 IME 接收的窗口
-HWND CreateDummyIMEWindow() {
-    const wchar_t CLASS_NAME[] = L"DummyIMEWindow";
-    WNDCLASS wc = { };
-    wc.lpfnWndProc   = DefWindowProc;  // 不需要自定义消息处理，可直接使用默认过程
-    wc.hInstance     = GetModuleHandle(nullptr);
-    wc.lpszClassName = CLASS_NAME;
-    if (!RegisterClass(&wc)) {
-        // 已经注册也无妨
-    }
-    // 创建一个无边框、隐藏的窗口
-    HWND hwnd = CreateWindowEx(
-        0,
-        CLASS_NAME,
-        L"Dummy IME Window",
-        WS_POPUP,
-        CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT, CW_USEDEFAULT,
-        nullptr, nullptr, GetModuleHandle(nullptr), nullptr
-    );
-    if (hwnd) {
-        ShowWindow(hwnd, SW_HIDE);
-    }
-    return hwnd;
-}
-std::wstring GetIMEComposition(HWND hwnd) {
-    std::wstring composition;
-    HIMC hIMC = ImmGetContext(hwnd);
-    if (hIMC) {
-        // 获取合成字符串的大小（字节数）
-        LONG size = ImmGetCompositionStringW(hIMC, GCS_COMPSTR, nullptr, 0);
-        if (size > 0) {
-            // 转换为 wchar_t 个数
-            composition.resize(size / sizeof(wchar_t));
-            ImmGetCompositionStringW(hIMC, GCS_COMPSTR, &composition[0], size);
-        }
-        ImmReleaseContext(hwnd, hIMC);
-    }
-    return composition;
-}
-
-
+	
     static std::wstring u8_to_u16(const char *str) {
         wchar_t strw[1024] = {};
         if(MultiByteToWideChar(CP_UTF8, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
@@ -762,7 +678,6 @@ std::wstring GetIMEComposition(HWND hwnd) {
     }
 
     static void on_chat_input() noexcept {
-        updateIMEComposition();
 	    struct key_input {
             std::uint8_t modifier; // 0001=shift 0010=ctrl 0100=alt
             std::uint8_t character;
@@ -920,11 +835,7 @@ std::wstring GetIMEComposition(HWND hwnd) {
 
                 }
 		 
-		    
-
-
-
-	///终止线
+		
             }
         }
     }
