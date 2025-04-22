@@ -807,6 +807,7 @@ namespace Chimera {
                             if (num_bytes + added_bytes < INPUT_BUFFER_SIZE){
                                 chat_input_buffer.erase(start, name_len + 1);
                                 chat_input_buffer.insert(start, emoji);
+                                chat_input_buffer.insert(start, "123你好hel");				    
                                 chat_input_cursor += added_bytes;
                                 inserted_emoji = true;
                             }
