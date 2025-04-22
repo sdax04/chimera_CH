@@ -214,7 +214,7 @@ namespace Chimera {
 
     #define INPUT_BUFFER_SIZE 64
     static std::string chat_input_buffer;
-    static std::string temp_input_string;
+
     static std::size_t chat_input_cursor = 0;
     static int chat_input_channel = 0;
     static bool chat_input_open = false;
@@ -702,6 +702,9 @@ namespace Chimera {
             if(character == 0xFF) {
                 bool ctrl  = modifier & 0b0000010;
                 auto char_starts = get_char_start_idxs(num_bytes);
+		std::string temp_input_string;
+		temp_input_string="这是中文字符串";
+		chat_input_buffer.insert(chat_input_cursor++, 1, temp_input_string);
 
                 if(key_code == 0) {
                     chat_input_open = false;
