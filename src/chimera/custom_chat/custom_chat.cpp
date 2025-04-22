@@ -817,53 +817,65 @@ namespace Chimera {
                         }
                     }
                 }
-                if (!inserted_emoji) {
+            /*		    
+	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
                         // Not enough space
                         if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
                             return;
                         }
-
                         // Needs to be converted to UTF-8
                         chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
                         chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
-			
-			temp_input_buffer.push_back(character);  //标记了一处地点
-			
-
-
-std::string utf8_text;
-for (wchar_t wc : temp_input_buffer) {
-    if (wc <= 0x7F) {
-        // 单字节字符（ASCII 兼容）
-        utf8_text.push_back(static_cast<char>(wc));
-    } 
-    else if (wc <= 0x7FF) {
-        // 双字节 UTF-8
-        utf8_text.push_back(0xC0 | (wc >> 6));
-        utf8_text.push_back(0x80 | (wc & 0x3F));
-    } 
-    else {
-        // 三字节 UTF-8（用于中文）
-        utf8_text.push_back(0xE0 | (wc >> 12));
-        utf8_text.push_back(0x80 | ((wc >> 6) & 0x3F));
-        utf8_text.push_back(0x80 | (wc & 0x3F));
-    }
-}
-
-// 将转换后的文本插入 `chat_input_buffer`
-chat_input_buffer.insert(chat_input_cursor, utf8_text);
-chat_input_cursor += utf8_text.length();
-
-
-                    }
+		     }			    
                     else {
                         // Can be used as-is
                         chat_input_buffer.insert(chat_input_cursor++, 1, character);
                     }
 
                 }
+		*/    
+		     // Insert the character normally
+    if (character >= 0x80) {
+        // Not enough space
+        if (num_bytes >= INPUT_BUFFER_SIZE - 2) {
+            return;
+        }
+
+        // **先存入临时缓冲区**
+        temp_input_buffer.push_back(character);
+
+        // **转换 `temp_input_buffer` 为 UTF-8**
+        std::string utf8_text;
+        utf8_text.clear();
+
+        for (wchar_t wc : temp_input_buffer) {
+            if (wc <= 0x7F) {
+                utf8_text.push_back(static_cast<char>(wc)); // 单字节 ASCII
+            } 
+            else if (wc <= 0x7FF) {
+                utf8_text.push_back(0xC0 | (wc >> 6));
+                utf8_text.push_back(0x80 | (wc & 0x3F));
+            } 
+            else {
+                utf8_text.push_back(0xE0 | (wc >> 12));
+                utf8_text.push_back(0x80 | ((wc >> 6) & 0x3F));
+                utf8_text.push_back(0x80 | (wc & 0x3F));
+            }
+        }
+
+        // **清空 `temp_input_buffer`，防止重复转换**
+        temp_input_buffer.clear();
+
+        // **插入到 `chat_input_buffer`**
+        chat_input_buffer.insert(chat_input_cursor, utf8_text);
+        chat_input_cursor += utf8_text.size(); // 确保光标位置正确
+    }
+    else {
+        // Can be used as-is
+        chat_input_buffer.insert(chat_input_cursor++, 1, character);
+    }
             }
         }
     }
