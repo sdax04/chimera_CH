@@ -417,7 +417,8 @@ namespace Chimera {
                 if(draw_shadow) {
                     override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
                 }
-               override_font->DrawTextW(NULL, wide_text.c_str(), -1, &rect, align, color);//修改费
+               std::string utf8_text = WideToUTF8(wide_text);
+                override_font->DrawText(NULL, utf8_text.c_str(), -1, &rect, align, color);//修改费
 
             }
             else {
@@ -631,11 +632,11 @@ namespace Chimera {
 
 std::wstring wide_text;
 if (auto *u8 = std::get_if<std::string>(&text)) {
-    std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-    wide_text = converter.from_bytes(*u8); // 转换 UTF-8 → 宽字符
+    wide_text = UTF8ToWide(*u8); // 使用新转换函数
 } else if (auto *u16 = std::get_if<std::wstring>(&text)) {
-    wide_text = *u16; // 直接使用宽字符
+    wide_text = *u16;
 }
+
 
 
         #define handle_formatting_call(what) handle_formatting(*what, x, y, width, height, alignment, font)
