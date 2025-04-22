@@ -778,7 +778,10 @@ namespace Chimera {
 			console_output("玩家发送消息: %s", chat_input_buffer.c_str()); // 将聊天内容打印到控制台
 			std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
 			std::wstring wide_chat_message = converter.from_bytes(chat_input_buffer); // 转换为 Unicode
-			console_output(L"玩家发送消息: %ls", wide_chat_message.c_str()); // 使用宽字符版本
+
+			// 重新转换为 UTF-8 字符串
+			std::string utf8_message = converter.to_bytes(wide_chat_message);
+			console_output("玩家发送消息: %s", utf8_message.c_str()); // 以 UTF-8 输出
                     }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
