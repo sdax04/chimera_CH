@@ -687,6 +687,7 @@ namespace Chimera {
 
         static key_input    *input_buffer = nullptr; // array of size 0x40
         static std::int16_t *input_count = nullptr;  // population count for input_buffer
+	
         if(!input_buffer) {
             auto *data = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("on_key_press_sig").data() + 10);
             input_buffer = reinterpret_cast<key_input*>(data + 2);
@@ -697,7 +698,29 @@ namespace Chimera {
         if(chat_input_open) {
             const auto& [modifier, character, key_code, input_unknown] = input_buffer[*input_count];
             auto num_bytes = chat_input_buffer.length();
+	
+		
+///开始
+		extern "C" void bring_up_chat_prompt(int channel) {
+    if (chat_input_open) {
+        return;
+    }
+    chat_input_open = true;
+    chat_input_buffer.clear();
+    chat_input_cursor = 0;
+    chat_input_channel = channel;
+    chat_open_state_changed = clock::now();
+    enable_input(false);
 
+    // 使用 console_text 缓冲区
+    const char* console_text = get_console_text();
+    if (console_text) {
+        chat_input_buffer = console_text; // 初始化聊天输入缓冲区为 console_text 内容
+        chat_input_cursor = std::strlen(console_text); // 光标位置同步到缓冲区末尾
+    }
+}
+///结束
+		
             // Special key pressed
             if(character == 0xFF) {
                 bool ctrl  = modifier & 0b0000010;
