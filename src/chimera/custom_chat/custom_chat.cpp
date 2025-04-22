@@ -214,7 +214,7 @@ namespace Chimera {
 
     #define INPUT_BUFFER_SIZE 64
     static std::string chat_input_buffer;
-    static std::wstring temp_input_buffer;
+    static std::string temp_input_string;
     static std::size_t chat_input_cursor = 0;
     static int chat_input_channel = 0;
     static bool chat_input_open = false;
@@ -836,46 +836,24 @@ namespace Chimera {
 
                 }
 		*/    
-		     // Insert the character normally
-    if (character >= 0x80) {
-        // Not enough space
-        if (num_bytes >= INPUT_BUFFER_SIZE - 2) {
-            return;
-        }
+		    
 
-        // **先存入临时缓冲区**
-        temp_input_buffer.push_back(character);
-
-        // **转换 `temp_input_buffer` 为 UTF-8**
-        std::string utf8_text;
-        utf8_text.clear();
-
-        for (wchar_t wc : temp_input_buffer) {
-            if (wc <= 0x7F) {
-                utf8_text.push_back(static_cast<char>(wc)); // 单字节 ASCII
-            } 
-            else if (wc <= 0x7FF) {
-                utf8_text.push_back(0xC0 | (wc >> 6));
-                utf8_text.push_back(0x80 | (wc & 0x3F));
-            } 
-            else {
-                utf8_text.push_back(0xE0 | (wc >> 12));
-                utf8_text.push_back(0x80 | ((wc >> 6) & 0x3F));
-                utf8_text.push_back(0x80 | (wc & 0x3F));
-            }
-        }
-
-        // **清空 `temp_input_buffer`，防止重复转换**
-        temp_input_buffer.clear();
-
-        // **插入到 `chat_input_buffer`**
-        chat_input_buffer.insert(chat_input_cursor, utf8_text);
-        chat_input_cursor += utf8_text.size(); // 确保光标位置正确
-    }
+if (!inserted_emoji) {
+    if (character >= 0x80) { 
+        // 中文字符，存入 `temp_input_string`
+        temp_input_string += character;
+	chat_input_buffer.insert(chat_input_cursor, temp_input_string); // 插入完整的中文字符串
+        chat_input_cursor += temp_input_string.length(); // 更新光标位置
+    } 
     else {
-        // Can be used as-is
+        // 英文或符号，直接插入 `chat_input_buffer`
         chat_input_buffer.insert(chat_input_cursor++, 1, character);
     }
+}
+
+
+
+	///终止线
             }
         }
     }
