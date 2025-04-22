@@ -214,6 +214,7 @@ namespace Chimera {
 
     #define INPUT_BUFFER_SIZE 64
     static std::string chat_input_buffer;
+    static std::wstring temp_input_buffer;
     static std::size_t chat_input_cursor = 0;
     static int chat_input_channel = 0;
     static bool chat_input_open = false;
@@ -806,8 +807,7 @@ namespace Chimera {
                             int added_bytes = emoji_len - (name_len + 1);
                             if (num_bytes + added_bytes < INPUT_BUFFER_SIZE){
                                 chat_input_buffer.erase(start, name_len + 1);
-                                chat_input_buffer.insert(start, emoji);
-                                chat_input_buffer.insert(start, "123你好hel");				    
+                                chat_input_buffer.insert(start, emoji);			    
                                 chat_input_cursor += added_bytes;
                                 inserted_emoji = true;
                             }
@@ -828,6 +828,35 @@ namespace Chimera {
                         // Needs to be converted to UTF-8
                         chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
                         chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
+			
+			temp_input_buffer.push_back(character);  //标记了一处地点
+			
+
+
+std::string utf8_text;
+for (wchar_t wc : temp_input_buffer) {
+    if (wc <= 0x7F) {
+        // 单字节字符（ASCII 兼容）
+        utf8_text.push_back(static_cast<char>(wc));
+    } 
+    else if (wc <= 0x7FF) {
+        // 双字节 UTF-8
+        utf8_text.push_back(0xC0 | (wc >> 6));
+        utf8_text.push_back(0x80 | (wc & 0x3F));
+    } 
+    else {
+        // 三字节 UTF-8（用于中文）
+        utf8_text.push_back(0xE0 | (wc >> 12));
+        utf8_text.push_back(0x80 | ((wc >> 6) & 0x3F));
+        utf8_text.push_back(0x80 | (wc & 0x3F));
+    }
+}
+
+// 将转换后的文本插入 `chat_input_buffer`
+chat_input_buffer.insert(chat_input_cursor, utf8_text);
+chat_input_cursor += utf8_text.length();
+
+
                     }
                     else {
                         // Can be used as-is
