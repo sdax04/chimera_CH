@@ -625,8 +625,15 @@ namespace Chimera {
                 break;
         }
 
-        auto *u8 = std::get_if<0>(&text);
-        auto *u16 = std::get_if<1>(&text);
+   
+        std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+        std::wstring wide_text;
+        if (auto *u8 = std::get_if<std::string>(&text)) {
+           wide_text = converter.from_bytes(*u8); // 转换为 Unicode
+           } 
+        else if (auto *u16 = std::get_if<std::wstring>(&text)) {
+                wide_text = *u16; // 直接使用宽字符
+           }
 
         #define handle_formatting_call(what) handle_formatting(*what, x, y, width, height, alignment, font)
 
