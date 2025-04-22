@@ -417,7 +417,8 @@ namespace Chimera {
                 if(draw_shadow) {
                     override_font->DrawText(NULL, u8->data(), -1, &rshadow, align, color_shadow);
                 }
-                override_font->DrawText(NULL, u8->data(), -1, &rect, align, color);
+                override_font->DrawTextW(NULL, wide_text.c_str(), -1, &rect, align, color);
+
             }
             else {
                 // Some cheap and nasty hackery to stop DrawText stripping the spaces of the end of chapter titles.
