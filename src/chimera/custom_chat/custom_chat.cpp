@@ -863,7 +863,7 @@ extern const std::string& get_console_text_temp();
 				            gbk_input_buffer.push_back(next_byte); // 添加第二个字节
 				            ++(*input_count); // 跳过已处理的第二字节0
 
-					chat_output(0,gbk_input_buffer.c_str();	
+					chat_output(0,gbk_input_buffer.c_str());	
 				        }
 				    }
 			
