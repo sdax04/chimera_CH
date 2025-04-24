@@ -623,7 +623,10 @@ extern const std::string& get_console_text_temp();
 	   // console_output("chat_input_buffer is:%s",chat_input_buffer);
 	    console_output("chat_input_buffer.c_str() is:%s",chat_input_buffer.c_str());
 	    chat_out(0, chat_input_temp.c_str());
-	    chat_out(0, gbk_to_u16(chat_input_temp.c_str()),c_str);
+	    
+	    std::wstring wide_message = gbk_to_u16(chat_input_temp);
+	    chat_out(0, wide_message.c_str());
+	    
 
 		
 }
