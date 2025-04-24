@@ -868,7 +868,7 @@ extern const std::string& get_console_text_temp();
 				    }
 			
 
-			chat_input_buffer.insert(chat_input_cursor++, 1,gbk_to_u16(gbk_input_buffer.c_str()));
+
 			    
                         // Not enough space
                         if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
