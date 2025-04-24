@@ -735,7 +735,8 @@ extern const std::string& get_console_text_temp();
 	    
         static key_input    *input_buffer = nullptr; // array of size 0x40
         static std::int16_t *input_count = nullptr;  // population count for input_buffer
-
+	static std::string gbk_buffer;
+	    
         if(!input_buffer) {
             auto *data = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("on_key_press_sig").data() + 10);
             input_buffer = reinterpret_cast<key_input*>(data + 2);
@@ -836,10 +837,7 @@ extern const std::string& get_console_text_temp();
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
                     chat_message_scroll = 0;
-                    enable_input(true);
-			
-    chat_input_buffer.clear(); // 清理输入缓冲区
-
+                    enable_input(true);			
                 }
             }
             // typed a non-control character and there's room left in the buffer
@@ -875,51 +873,24 @@ extern const std::string& get_console_text_temp();
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
-		
-					/*  // 检测到可能的多字节字符（GBK）
-							        chat_input_buffer.push_back(character);
+			gbk_buffer += static_cast<char>(character);
+			if(gbk_buffer.size() >= 2) {
+           			wchar_t wchar[2] = {};
+			        int wchar_len = MultiByteToWideChar(936, 0, gbk_buffer.c_str(), gbk_buffer.size(), wchar, sizeof(wchar) / sizeof(wchar[0]));
+			        if (wchar_len > 0) {
+			            char utf8[4] = {};
+			            int utf8_len = WideCharToMultiByte(CP_UTF8, 0, wchar, wchar_len, utf8, sizeof(utf8), nullptr, nullptr);
+			            if (utf8_len > 0 && chat_input_buffer.length() + utf8_len < INPUT_BUFFER_SIZE) {
+			                chat_input_buffer.insert(chat_input_cursor, utf8, utf8_len);
+			                chat_input_cursor += utf8_len;
+			                gbk_buffer.clear(); // 清空缓冲区		 // 检测到完整的GBK字符（双字节），进行编码转换
+       			 }
+			else
+			{
+				return;
+			}
 				
-							   if (character >= 0x81 && character <= 0xFE) { // 符合 GBK 第一字节
-							    auto next_byte = input_buffer[*input_count + 1].character;
-							    if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) { // 符合 GBK 第二字节
-							
-							        chat_input_buffer.push_back(next_byte);
-							        ++(*input_count); // 跳过已处理的第二字节
-							    }
-							}
-			
-*/					// 检查缓冲区是否有足够空间插入至少一个字节
-        if(num_bytes >= INPUT_BUFFER_SIZE - 1) {
-            return;
-        }
-
-        // 在光标位置插入第一个字节
-        chat_input_buffer.insert(chat_input_cursor, 1, character);
-        chat_input_cursor++;
-        num_bytes++; // 更新字节数
-
-        // 检查是否是GBK首字节
-        if(character >= 0x81 && character <= 0xFE) {
-            // 检查是否有后续输入事件
-            if(*input_count + 1 < 0x40) { // 确保不越界
-                auto &next_input = input_buffer[*input_count + 1];
-                auto next_byte = next_input.character;
-
-                // 验证GBK第二字节
-                if(next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) {
-                    // 检查是否有足够空间插入第二个字节
-                    if(num_bytes < INPUT_BUFFER_SIZE - 1) {
-                        // 在光标位置插入第二个字节
-                        chat_input_buffer.insert(chat_input_cursor, 1, next_byte);
-                        chat_input_cursor++;
-                        num_bytes++;
-
-                        // 跳过已处理的输入事件
-                        ++(*input_count);
-                    }
-                }
-            }
-        }			    
+    		    
 			    
 		   // Not enough space
 			if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
@@ -927,8 +898,6 @@ extern const std::string& get_console_text_temp();
 			}
 
 
-			    
-		
                         // Needs to be converted to UTF-8
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
@@ -936,7 +905,9 @@ extern const std::string& get_console_text_temp();
 		    else {
 			// Can be used as-is
 			    if (num_bytes + 1 <= INPUT_BUFFER_SIZE) { // 单字节仍需要缓冲区大小检查
-				  chat_input_buffer.insert(chat_input_cursor++, 1, character);  
+				   // ASCII 字符，直接插入
+				    chat_input_buffer.insert(chat_input_cursor++, 1, character);
+				    gbk_buffer.clear(); // 清空缓冲区
 			    }
 			}		
 		}
