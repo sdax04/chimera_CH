@@ -617,7 +617,7 @@ extern const std::string& get_console_text_temp();
 ///yin ru console_text
 	
 	chat_input_temp = get_console_text_temp();
-	    
+	chat_input_buffer.insert(chat_input_cursor,chat_input_temp);   
         enable_input(false);    
     }
 
