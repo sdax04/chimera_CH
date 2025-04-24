@@ -884,7 +884,9 @@ extern const std::string& get_console_text_temp();
 			                chat_input_buffer.insert(chat_input_cursor, utf8, utf8_len);
 			                chat_input_cursor += utf8_len;
 			                gbk_buffer.clear(); // 清空缓冲区		 // 检测到完整的GBK字符（双字节），进行编码转换
-       			 }
+       				 	}
+				}
+			}
 			else
 			{
 				return;
