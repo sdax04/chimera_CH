@@ -625,7 +625,7 @@ extern const std::string& get_console_text_temp();
 	    chat_out(0, chat_input_temp.c_str());
 
 console_output("console_text hex: ");
-for (const char* p = console_text; *p; ++p) {
+for (const char* p = chat_input_temp; *p; ++p) {
     console_output("%02X ", static_cast<unsigned char>(*p));
 }
 
