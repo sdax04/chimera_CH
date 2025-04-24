@@ -624,12 +624,9 @@ extern const std::string& get_console_text_temp();
 	    console_output("chat_input_buffer.c_str() is:%s",chat_input_buffer.c_str());
 	    chat_out(0, chat_input_temp.c_str());
 
-	    std::wstring wide_message = u8_to_u16(chat_input_temp.c_str());
-
-// 打印每个宽字符的十六进制值
-console_output("Converted UTF-16 hex: ");
-for (const wchar_t& ch : wide_message) {
-    console_output("%04X ", static_cast<int>(ch)); // 以四位十六进制显示宽字符
+console_output("console_text hex: ");
+for (const char* p = console_text; *p; ++p) {
+    console_output("%02X ", static_cast<unsigned char>(*p));
 }
 
 
