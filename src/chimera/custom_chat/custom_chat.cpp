@@ -650,18 +650,6 @@ extern const std::string& get_console_text_temp();
         enable_input(false);    
     }
 
-static std::wstring gbk_to_u16(const char *str) {
-    wchar_t strw[1024] = {};
-    // 使用 CP_ACP 表示采用系统 ANSI 码页（通常是 GBK 或 CP936）
-    if (MultiByteToWideChar(CP_ACP, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
-        return std::wstring();
-    } else {
-        return std::wstring(strw);
-    }
-}
-
-
-
     static std::vector<unsigned int> get_char_start_idxs(unsigned int num_bytes){
         // Calculate an array of character start indexes. These can sometimes be
         // multiple characters visually. Zero width joining characters are
