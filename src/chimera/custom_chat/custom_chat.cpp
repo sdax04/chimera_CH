@@ -625,7 +625,7 @@ extern const std::string& get_console_text_temp();
 	    chat_out(0, chat_input_temp.c_str());
 
 		chat_out(0, u8_to_u16(chat_input_temp.c_str()).c_str());
-		chat_out(0, u8_to_u16(chat_input_temp.c_str()));
+
 
         enable_input(false);    
     }
