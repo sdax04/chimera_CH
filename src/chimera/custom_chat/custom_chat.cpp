@@ -240,7 +240,7 @@ static std::wstring gbk_to_u16(const char *str) {
     static bool player_in_server[16] = {};
     static char player_name[16][64];
 
-    static bool is_chinese = false;
+    static bool is_chinese = true;
 
 
 
@@ -368,16 +368,17 @@ static std::wstring gbk_to_u16(const char *str) {
             apply_text_quake_colors(prompt_prefix, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 		
 		
+		if(is_chinese==false){
 	
             // Draw the entered text
             auto u16_chat_buffer = u8_to_u16(chat_input_buffer.c_str());
             apply_text_quake_colors(u16_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
-
-		if(is_chinese==true){
+		}
+		
 		///我加的
    	    auto gbk_chat_buffer = gbk_to_u16(chat_input_buffer.c_str());
             apply_text_quake_colors(gbk_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
-		}
+		
 
 			
             // Figure out where and what color to draw the cursor
@@ -829,7 +830,7 @@ extern const std::string& get_console_text_temp();
                 // Enter
                 else if(key_code == 0x38) {
                     if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
-                        chat_out(chat_input_channel, chat_input_buffer.c_str());
+                        //chat_out(chat_input_channel, chat_input_buffer.c_str());
                         chat_out(chat_input_channel, gbk_to_u16(chat_input_buffer.c_str()).c_str());
 		    }
                     chat_input_open = false;
@@ -871,7 +872,7 @@ extern const std::string& get_console_text_temp();
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
-			is_chinese=true;
+		
 					  // 检测到可能的多字节字符（GBK）
 				   chat_input_buffer.push_back(character); // 添加第一个字节
 				    if (character >= 0x81 && character <= 0xFE) { 
