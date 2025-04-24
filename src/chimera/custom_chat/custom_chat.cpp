@@ -875,16 +875,14 @@ extern const std::string& get_console_text_temp();
 		
 					  // 检测到可能的多字节字符（GBK）
 				   chat_input_buffer.push_back(character); // 添加第一个字节
-				    if (character >= 0x81 && character <= 0xFE) { 
-				        auto next_byte = input_buffer[*input_count + 1].character;
-				        if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) {
-				            chat_input_buffer.push_back(next_byte); // 添加第二个字节
-				            ++(*input_count); // 跳过已处理的第二字节0
-						
-						
-
-				        }
-				    }
+							   if (character >= 0x81 && character <= 0xFE) { // 符合 GBK 第一字节
+							    auto next_byte = input_buffer[*input_count + 1].character;
+							    if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) { // 符合 GBK 第二字节
+							        gbk_input_buffer.push_back(character);
+							        gbk_input_buffer.push_back(next_byte);
+							        ++(*input_count); // 跳过已处理的第二字节
+							    }
+							}
 			
 
 
@@ -894,8 +892,8 @@ extern const std::string& get_console_text_temp();
                             return;
                         }
                         // Needs to be converted to UTF-8
-                        chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
-                        chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
+                      ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
+                      ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
 		     }			    
                     else {
                         // Can be used as-is
