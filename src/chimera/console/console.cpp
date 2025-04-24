@@ -27,6 +27,7 @@ namespace Chimera {
     static bool rcon_command_used_recently = false;
     static void read_command();
     static char *console_text = NULL;
+    static std::string console_text_temp;
 
     using SteadyClock = std::chrono::steady_clock;
     struct Line {
@@ -501,6 +502,7 @@ namespace Chimera {
         }
         else {
             button_held = false;
+            console_text_temp = console_text;
         }
 
         // Show the lines
@@ -545,6 +547,12 @@ namespace Chimera {
             }
         }
     }
+
+
+const std::string& get_console_text_temp() {
+    return console_text_temp;
+}
+
 
     static void do_cls() noexcept {
         // make it look like it was an accident
