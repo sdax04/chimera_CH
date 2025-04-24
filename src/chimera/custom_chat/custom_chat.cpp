@@ -871,7 +871,7 @@ extern const std::string& get_console_text_temp();
                         }
                     }
                 }
-          	    
+          	    //////////////////////////////////////////////////////////////////////
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
@@ -888,17 +888,17 @@ extern const std::string& get_console_text_temp();
 							    }
 							}
 			
-*/
-					if(character >= 0x80) {
-					        // 检查缓冲区是否有足够空间插入至少一个字节
-					        if(num_bytes >= INPUT_BUFFER_SIZE - 1) {
-					            return;
-					        }
-						  // 在光标位置插入第一个字节
-					        chat_input_buffer.insert(chat_input_cursor, 1, character);
-					        chat_input_cursor++;
-					        num_bytes++; // 更新字节数
-  // 检查是否是GBK首字节
+*/// 检查缓冲区是否有足够空间插入至少一个字节
+        if(num_bytes >= INPUT_BUFFER_SIZE - 1) {
+            return;
+        }
+
+        // 在光标位置插入第一个字节
+        chat_input_buffer.insert(chat_input_cursor, 1, character);
+        chat_input_cursor++;
+        num_bytes++; // 更新字节数
+
+        // 检查是否是GBK首字节
         if(character >= 0x81 && character <= 0xFE) {
             // 检查是否有后续输入事件
             if(*input_count + 1 < 0x40) { // 确保不越界
@@ -920,31 +920,30 @@ extern const std::string& get_console_text_temp();
                 }
             }
         }
+					
 			    
-			    
-                   // Not enough space
-                        if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
-                            return;
-                        }
+										    
+							                   // Not enough space
+							                        if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
+							                            return;
+							                        }
 
 
 	
-}
+		
                         // Needs to be converted to UTF-8
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
 		     }			    
-                    else {
-                        // Can be used as-is
-			    if (num_bytes + 1 <= INPUT_BUFFER_SIZE) { // 单字节仍需要缓冲区大小检查
-          			  chat_input_buffer.insert(chat_input_cursor++, 1, character);
+			                    else {
+			                        // Can be used as-is
+						    if (num_bytes + 1 <= INPUT_BUFFER_SIZE) { // 单字节仍需要缓冲区大小检查
+			          			  chat_input_buffer.insert(chat_input_cursor++, 1, character);  }
 
-                    }
-
-                }
+              					  }
 		 
 		
-            }
+            
         }
     }
 
