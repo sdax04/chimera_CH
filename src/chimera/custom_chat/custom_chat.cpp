@@ -862,7 +862,7 @@ extern const std::string& get_console_text_temp();
 				        if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) {
 				            gbk_input_buffer.push_back(next_byte); // 添加第二个字节
 				            ++(*input_count); // 跳过已处理的第二字节0
-						C("gbk_input_buffer is %s",gbk_input_buffer.c_str());
+						
 						console_output("gbk_input_buffer is %s",gbk_input_buffer.c_str());
 						
 							console_output("console_text hex: ");
