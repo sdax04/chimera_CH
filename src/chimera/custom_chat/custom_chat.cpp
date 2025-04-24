@@ -888,7 +888,7 @@ extern const std::string& get_console_text_temp();
 							    }
 							}
 			
-*/// 检查缓冲区是否有足够空间插入至少一个字节
+*/					// 检查缓冲区是否有足够空间插入至少一个字节
         if(num_bytes >= INPUT_BUFFER_SIZE - 1) {
             return;
         }
@@ -919,13 +919,15 @@ extern const std::string& get_console_text_temp();
                     }
                 }
             }
-        }
-								    
+        }			    
 			    
 		   // Not enough space
 			if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
 			    return;
 			}
+
+
+			    
 		
                         // Needs to be converted to UTF-8
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
@@ -935,10 +937,12 @@ extern const std::string& get_console_text_temp();
 			// Can be used as-is
 			    if (num_bytes + 1 <= INPUT_BUFFER_SIZE) { // 单字节仍需要缓冲区大小检查
 				  chat_input_buffer.insert(chat_input_cursor++, 1, character);  
-			    }		
-        }
-    }
-	    }    
+			    }
+			}		
+		}
+	    }
+	}
+    }    
     static void enable_input(bool enabled) noexcept {
         auto &sig = get_chimera().get_signature("key_press_mov_sig");
         overwrite(sig.data() + 6, static_cast<std::uint8_t>(enabled));
