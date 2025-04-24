@@ -502,7 +502,7 @@ namespace Chimera {
         }
         else {
             button_held = false;
-            console_text_temp = console_text;
+            console_text_temp = get_console_text();
         }
 
         // Show the lines
