@@ -554,7 +554,7 @@ namespace Chimera {
 
 
 const std::string& get_console_text_temp() {
-    return console_text_temp.c_str();
+    return console_text_temp;
 }
 
 
