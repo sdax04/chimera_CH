@@ -51,6 +51,15 @@ namespace Chimera {
             return std::wstring(strw);
         }
     }
+static std::wstring gbk_to_u16(const char *str) {
+    wchar_t strw[1024] = {};
+    // 使用 CP_ACP 表示采用系统 ANSI 码页（通常是 GBK 或 CP936）
+    if (MultiByteToWideChar(CP_ACP, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
+        return std::wstring();
+    } else {
+        return std::wstring(strw);
+    }
+}
 
     static std::string u16_to_u8(const wchar_t *strw) {
         char str[1024] = {};
@@ -62,15 +71,7 @@ namespace Chimera {
         }
     }
 
-static std::wstring gbk_to_u16(const char *str) {
-    wchar_t strw[1024] = {};
-    // 使用 CP_ACP 表示采用系统 ANSI 码页（通常是 GBK 或 CP936）
-    if (MultiByteToWideChar(CP_ACP, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
-        return std::wstring();
-    } else {
-        return std::wstring(strw);
-    }
-}
+
 
 
 
@@ -638,13 +639,9 @@ extern const std::string& get_console_text_temp();
 	    console_output("chat_input_buffer.c_str() is:%s",chat_input_buffer.c_str());
 	    chat_out(0, chat_input_temp.c_str());
 	    
-	    
-	    chat_out(0, gbk_to_u16(chat_input_temp.c_str()).c_str());
-
-	    
 
 		
-}
+	}
 
 
         enable_input(false);    
