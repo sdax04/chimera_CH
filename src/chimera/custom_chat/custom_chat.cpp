@@ -611,7 +611,7 @@ namespace Chimera {
         chat_open_state_changed = clock::now();
 	//---————————
 	chat_input_buffer.insert(chat_input_cursor,"早上好");
-	std::string chat_input_temp="现在我有冰淇淋！"
+	std::string chat_input_temp="现在我有冰淇淋！";
 	chat_input_buffer.insert(chat_input_cursor,chat_input_temp);
 	    
 
