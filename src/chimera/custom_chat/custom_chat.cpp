@@ -363,13 +363,20 @@ static std::wstring gbk_to_u16(const char *str) {
             std::snprintf(prompt_prefix, sizeof(prompt_prefix), "%s - ", localize(channel_name));
             auto x_offset_text_buffer = text_pixel_length(prompt_prefix, chat_input_font);
             apply_text_quake_colors(prompt_prefix, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
-
+		
+		
+	bool is_chinese = false;
             // Draw the entered text
             auto u16_chat_buffer = u8_to_u16(chat_input_buffer.c_str());
             apply_text_quake_colors(u16_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
-	   ///我加的
+
+		if(is_chinese==true){
+		///我加的
    	    auto gbk_chat_buffer = gbk_to_u16(chat_input_buffer.c_str());
             apply_text_quake_colors(gbk_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
+		}
+
+			
             // Figure out where and what color to draw the cursor
             const static std::regex color_code_re = std::regex("\\^(?:\\^|(.))");
             auto pre_cursor_text = chat_input_buffer.substr(0, chat_input_cursor);
@@ -820,6 +827,7 @@ extern const std::string& get_console_text_temp();
                 else if(key_code == 0x38) {
                     if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
                         chat_out(chat_input_channel, chat_input_buffer.c_str());
+                        chat_out(chat_input_channel, gbk_to_u16(chat_input_buffer.c_str()));
 		    }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
@@ -860,7 +868,7 @@ extern const std::string& get_console_text_temp();
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
-
+			is_chinese=true;
 					  // 检测到可能的多字节字符（GBK）
 				   chat_input_buffer.push_back(character); // 添加第一个字节
 				    if (character >= 0x81 && character <= 0xFE) { 
