@@ -623,15 +623,26 @@ extern const std::string& get_console_text_temp();
 	   // console_output("chat_input_buffer is:%s",chat_input_buffer);
 	    console_output("chat_input_buffer.c_str() is:%s",chat_input_buffer.c_str());
 	    chat_out(0, chat_input_temp.c_str());
+	    chat_out(0, gbk_to_u16(chat_input_temp.c_str()),c_str);
 
-console_output("console_text hex: ");
-for (const char* p = chat_input_temp.c_str(); *p; ++p) {
-    console_output("%02X ", static_cast<unsigned char>(*p));
+		
 }
 
 
         enable_input(false);    
     }
+
+static std::wstring gbk_to_u16(const char *str) {
+    wchar_t strw[1024] = {};
+    // 使用 CP_ACP 表示采用系统 ANSI 码页（通常是 GBK 或 CP936）
+    if (MultiByteToWideChar(CP_ACP, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
+        return std::wstring();
+    } else {
+        return std::wstring(strw);
+    }
+}
+
+
 
     static std::vector<unsigned int> get_char_start_idxs(unsigned int num_bytes){
         // Calculate an array of character start indexes. These can sometimes be
