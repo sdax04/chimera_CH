@@ -494,7 +494,9 @@ namespace Chimera {
                     if(position < static_cast<std::size_t>(half_page)) {
                         position = 0;
                         console_output("console_text is:%s",console_text);
-                        console_output(u8"临时文本是:%s",console_text_temp.c_str());
+                        console_text_temp = console_text;
+                        
+                        console_output("console_text_temp is:%s",console_text_temp.c_str());
                     }
                     else {
                         position -= half_page;
@@ -504,7 +506,7 @@ namespace Chimera {
         }
         else {
             button_held = false;
-            console_text_temp = get_console_text();
+            console_text_temp = console_text;
         }
 
         // Show the lines
