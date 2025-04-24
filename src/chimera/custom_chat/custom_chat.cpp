@@ -722,7 +722,9 @@ extern const std::string& get_console_text_temp();
 	    
         static key_input    *input_buffer = nullptr; // array of size 0x40
         static std::int16_t *input_count = nullptr;  // population count for input_buffer
-	
+
+  static std::string gbk_input_buffer; // 用于存储GBK字符串的独立缓冲区
+
         if(!input_buffer) {
             auto *data = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("on_key_press_sig").data() + 10);
             input_buffer = reinterpret_cast<key_input*>(data + 2);
@@ -852,6 +854,18 @@ extern const std::string& get_console_text_temp();
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
+
+			 // 将多字节字符作为GBK存储
+                gbk_input_buffer.push_back(character);
+                if (character >= 0x81 && character <= 0xFE) { // 可能是GBK字符的第一字节
+                    auto next_byte = input_buffer[*input_count + 1].character;
+                    if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) { // 验证第二字节
+                        gbk_input_buffer.push_back(next_byte);
+                        ++(*input_count); // 消耗掉下一字节
+			
+
+			chat_input_buffer.insert(chat_input_cursor++, 1,gbk_to_u16(gbk_input_buffer.c_str()));
+			    
                         // Not enough space
                         if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
                             return;
@@ -862,6 +876,7 @@ extern const std::string& get_console_text_temp();
 		     }			    
                     else {
                         // Can be used as-is
+			    
                         chat_input_buffer.insert(chat_input_cursor++, 1, character);
                     }
 
