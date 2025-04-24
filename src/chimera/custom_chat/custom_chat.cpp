@@ -708,16 +708,7 @@ namespace Chimera {
             auto num_bytes = chat_input_buffer.length();
 	
 		
-///开始
 
-  
-    // 使用 console_text 缓冲区
-    const char* console_text = get_console_text();
-    if (console_text) {
-        chat_input_buffer = console_text; // 初始化聊天输入缓冲区为 console_text 内容
-    }
-
-///结束
 		
             // Special key pressed
             if(character == 0xFF) {
