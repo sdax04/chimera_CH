@@ -837,6 +837,9 @@ extern const std::string& get_console_text_temp();
                     chat_open_state_changed = clock::now();
                     chat_message_scroll = 0;
                     enable_input(true);
+			if (!chat_input_open) {
+    chat_input_buffer.clear(); // 清理输入缓冲区
+}
                 }
             }
             // typed a non-control character and there's room left in the buffer
@@ -872,7 +875,7 @@ extern const std::string& get_console_text_temp();
 	    	if (!inserted_emoji) {
                     // Insert the character normally
                     if(character >= 0x80) {
-		
+		/*
 					  // 检测到可能的多字节字符（GBK）
 							        chat_input_buffer.push_back(character);
 				
@@ -885,21 +888,42 @@ extern const std::string& get_console_text_temp();
 							    }
 							}
 			
-
+*/
 
 			    
-                        // Not enough space
+        // 检测到可能的 GBK 字符
+
+if (character >= 0x81 && character <= 0xFE) {
+    if (*input_count + 1 < INPUT_BUFFER_SIZE) { // 确保不会越界访问
+        auto next_byte = input_buffer[*input_count + 1].character;
+        if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) {
+            chat_input_buffer.push_back(character);
+            chat_input_buffer.push_back(next_byte);
+            ++(*input_count); // 跳过已处理的第二字节
+        }
+    } else {
+        console_output("Input buffer out of range.");
+    }
+}
+
+			    
+                   // Not enough space
                         if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
                             return;
                         }
+
+
+	
+}
                         // Needs to be converted to UTF-8
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0xC2 + (character > 0xBF ? 1 : 0));
                       ///  chat_input_buffer.insert(chat_input_cursor++, 1, 0x80 + (character & 0x3F));
 		     }			    
                     else {
                         // Can be used as-is
-			    
-                        chat_input_buffer.insert(chat_input_cursor++, 1, character);
+			    if (num_bytes + 1 <= INPUT_BUFFER_SIZE) { // 单字节仍需要缓冲区大小检查
+          			  chat_input_buffer.insert(chat_input_cursor++, 1, character);
+
                     }
 
                 }
