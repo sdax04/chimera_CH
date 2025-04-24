@@ -367,7 +367,9 @@ static std::wstring gbk_to_u16(const char *str) {
             // Draw the entered text
             auto u16_chat_buffer = u8_to_u16(chat_input_buffer.c_str());
             apply_text_quake_colors(u16_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
-
+	   ///我加的
+   	    auto gbk_chat_buffer = gbk_to_u16(chat_input_buffer.c_str());
+            apply_text_quake_colors(gbk_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
             // Figure out where and what color to draw the cursor
             const static std::regex color_code_re = std::regex("\\^(?:\\^|(.))");
             auto pre_cursor_text = chat_input_buffer.substr(0, chat_input_cursor);
@@ -723,8 +725,6 @@ extern const std::string& get_console_text_temp();
         static key_input    *input_buffer = nullptr; // array of size 0x40
         static std::int16_t *input_count = nullptr;  // population count for input_buffer
 
-  static std::string gbk_input_buffer; // 用于存储GBK字符串的独立缓冲区
-
         if(!input_buffer) {
             auto *data = *reinterpret_cast<std::uint8_t **>(get_chimera().get_signature("on_key_press_sig").data() + 10);
             input_buffer = reinterpret_cast<key_input*>(data + 2);
@@ -758,6 +758,12 @@ extern const std::string& get_console_text_temp();
                     if(chat_message_scroll > 0) {
                         chat_message_scroll--;
                     }
+			console_output("chat_input_buffer is %s",chat_input_buffer.c_str());
+						
+							console_output("console_text hex: ");
+							for (const char* p = chat_input_buffer; *p; ++p) {
+							    console_output("%02X ", static_cast<unsigned char>(*p));
+							}
                 }
                 // Home
                 else if(key_code == 0x52){
@@ -856,19 +862,14 @@ extern const std::string& get_console_text_temp();
                     if(character >= 0x80) {
 
 					  // 检测到可能的多字节字符（GBK）
-				    gbk_input_buffer.push_back(character); // 添加第一个字节
+				   chat_input_buffer.push_back(character); // 添加第一个字节
 				    if (character >= 0x81 && character <= 0xFE) { 
 				        auto next_byte = input_buffer[*input_count + 1].character;
 				        if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) {
-				            gbk_input_buffer.push_back(next_byte); // 添加第二个字节
+				            chat_input_buffer.push_back(next_byte); // 添加第二个字节
 				            ++(*input_count); // 跳过已处理的第二字节0
 						
-						console_output("gbk_input_buffer is %s",gbk_input_buffer.c_str());
 						
-							console_output("console_text hex: ");
-							for (const char* p = gbk_input_buffer.c_str(); *p; ++p) {
-							    console_output("%02X ", static_cast<unsigned char>(*p));
-							}
 
 				        }
 				    }
