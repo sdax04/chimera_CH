@@ -937,7 +937,9 @@ extern const std::string& get_console_text_temp();
 				  chat_input_buffer.insert(chat_input_cursor++, 1, character);  
 			    }
 
-			  }		 
+			  }
+		}
+	    }
 		}
         }
     }
