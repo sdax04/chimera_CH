@@ -609,7 +609,15 @@ namespace Chimera {
         chat_input_cursor = 0;
         chat_input_channel = channel;
         chat_open_state_changed = clock::now();
+	//---————————
+	chat_input_buffer.insert(chat_input_cursor,"早上好");
+	std::string chat_input_temp="现在我有冰淇淋！"
+	chat_input_buffer.insert(chat_input_cursor,chat_input_temp);
+	    
+
+	//---————————
         enable_input(false);
+	    
     }
 
     static std::vector<unsigned int> get_char_start_idxs(unsigned int num_bytes){
