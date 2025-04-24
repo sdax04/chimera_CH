@@ -39,7 +39,9 @@ namespace Chimera {
     static const char *color_id_for_player(std::uint8_t player, ColorARGB *color_to_use);
     static void check_for_quit_players();
     static void load_chat_settings();
-	
+
+
+
     static std::wstring u8_to_u16(const char *str) {
         wchar_t strw[1024] = {};
         if(MultiByteToWideChar(CP_UTF8, 0, str, -1, strw, sizeof(strw) / sizeof(*strw)) == 0) {
@@ -599,6 +601,9 @@ namespace Chimera {
         }
         *array = message;
     }
+	std::string chat_input_temp
+
+extern const std::string& get_console_text_temp();
 
     extern "C" void bring_up_chat_prompt(int channel) {
         if(chat_input_open) {
@@ -609,15 +614,11 @@ namespace Chimera {
         chat_input_cursor = 0;
         chat_input_channel = channel;
         chat_open_state_changed = clock::now();
-	//---————————
-	chat_input_buffer.insert(chat_input_cursor,"早上好");
-	std::string chat_input_temp="现在我有冰淇淋！";
-	chat_input_buffer.insert(chat_input_cursor,chat_input_temp);
+///yin ru console_text
+	
+	chat_input_temp = get_console_text_temp();
 	    
-
-	//---————————
-        enable_input(false);
-	    
+        enable_input(false);    
     }
 
     static std::vector<unsigned int> get_char_start_idxs(unsigned int num_bytes){
@@ -692,7 +693,7 @@ namespace Chimera {
             std::uint8_t key_code;
             std::uint8_t unknown; // definitely set to different values but meaning is unclear
         }; static_assert(sizeof(key_input) == sizeof(std::uint32_t)); // 4-byte strides
-
+	    
         static key_input    *input_buffer = nullptr; // array of size 0x40
         static std::int16_t *input_count = nullptr;  // population count for input_buffer
 	
@@ -706,8 +707,6 @@ namespace Chimera {
         if(chat_input_open) {
             const auto& [modifier, character, key_code, input_unknown] = input_buffer[*input_count];
             auto num_bytes = chat_input_buffer.length();
-	
-		
 
 		
             // Special key pressed
@@ -787,11 +786,6 @@ namespace Chimera {
                 else if(key_code == 0x38) {
                     if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
                         chat_out(chat_input_channel, chat_input_buffer.c_str());
-			console_output("玩家发送消息: %s", chat_input_buffer.c_str()); // 将聊天内容打印到控制台
-			
-		  	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
-			std::wstring wide_chat_message = converter.from_bytes(chat_input_buffer);
-			console_output("玩家发送消息: %s", converter.to_bytes(wide_chat_message).c_str()); // 转换回 UTF-8 以支持控制台
 		    }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
