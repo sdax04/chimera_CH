@@ -601,7 +601,7 @@ namespace Chimera {
         }
         *array = message;
     }
-	std::string chat_input_temp
+	std::string chat_input_temp;
 
 extern const std::string& get_console_text_temp();
 
