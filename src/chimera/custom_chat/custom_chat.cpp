@@ -874,11 +874,12 @@ extern const std::string& get_console_text_temp();
                     if(character >= 0x80) {
 		
 					  // 检测到可能的多字节字符（GBK）
+							        chat_input_buffer.push_back(character);
 				
 							   if (character >= 0x81 && character <= 0xFE) { // 符合 GBK 第一字节
 							    auto next_byte = input_buffer[*input_count + 1].character;
 							    if (next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) { // 符合 GBK 第二字节
-							        chat_input_buffer.push_back(character);
+							
 							        chat_input_buffer.push_back(next_byte);
 							        ++(*input_count); // 跳过已处理的第二字节
 							    }
