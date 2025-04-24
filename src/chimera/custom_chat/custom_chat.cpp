@@ -876,7 +876,7 @@ extern const std::string& get_console_text_temp();
                     // Insert the character normally
                     if(character >= 0x80) {
 		
-					  // 检测到可能的多字节字符（GBK）
+					/*  // 检测到可能的多字节字符（GBK）
 							        chat_input_buffer.push_back(character);
 				
 							   if (character >= 0x81 && character <= 0xFE) { // 符合 GBK 第一字节
@@ -888,8 +888,39 @@ extern const std::string& get_console_text_temp();
 							    }
 							}
 			
+*/
+					if(character >= 0x80) {
+					        // 检查缓冲区是否有足够空间插入至少一个字节
+					        if(num_bytes >= INPUT_BUFFER_SIZE - 1) {
+					            return;
+					        }
+						  // 在光标位置插入第一个字节
+					        chat_input_buffer.insert(chat_input_cursor, 1, character);
+					        chat_input_cursor++;
+					        num_bytes++; // 更新字节数
+  // 检查是否是GBK首字节
+        if(character >= 0x81 && character <= 0xFE) {
+            // 检查是否有后续输入事件
+            if(*input_count + 1 < 0x40) { // 确保不越界
+                auto &next_input = input_buffer[*input_count + 1];
+                auto next_byte = next_input.character;
 
+                // 验证GBK第二字节
+                if(next_byte >= 0x40 && next_byte <= 0xFE && next_byte != 0x7F) {
+                    // 检查是否有足够空间插入第二个字节
+                    if(num_bytes < INPUT_BUFFER_SIZE - 1) {
+                        // 在光标位置插入第二个字节
+                        chat_input_buffer.insert(chat_input_cursor, 1, next_byte);
+                        chat_input_cursor++;
+                        num_bytes++;
 
+                        // 跳过已处理的输入事件
+                        ++(*input_count);
+                    }
+                }
+            }
+        }
+			    
 			    
                    // Not enough space
                         if(num_bytes >= INPUT_BUFFER_SIZE - 2) {
