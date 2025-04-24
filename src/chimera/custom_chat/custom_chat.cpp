@@ -633,7 +633,7 @@ extern const std::string& get_console_text_temp();
 	    
 
 		
-	}
+	
 
 
         enable_input(false);    
