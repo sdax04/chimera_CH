@@ -602,7 +602,7 @@ namespace Chimera {
         *array = message;
     }
 	std::string chat_input_temp;
-	std::string chinese_text=="你好";
+	std::string chinese_text="你好";
 
 extern const std::string& get_console_text_temp();
 
