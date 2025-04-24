@@ -823,7 +823,7 @@ extern const std::string& get_console_text_temp();
                 else if(key_code == 0x38) {
                     if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
                         //chat_out(chat_input_channel, chat_input_buffer.c_str());
-                        chat_out(chat_input_channel, gbk_to_u16(chat_input_buffer.c_str()).c_str());
+                        chat_out(chat_input_channel, u8_to_u16(chat_input_buffer.c_str()).c_str());
 		    }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
