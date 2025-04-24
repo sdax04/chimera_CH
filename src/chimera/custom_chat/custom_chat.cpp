@@ -237,9 +237,12 @@ static std::wstring gbk_to_u16(const char *str) {
     static int chat_input_channel = 0;
     static bool chat_input_open = false;
     static clock::time_point chat_open_state_changed;
-
     static bool player_in_server[16] = {};
     static char player_name[16][64];
+
+    static bool is_chinese = false;
+
+
 
     static bool show_chat_color_help = false;
     void set_show_color_help(bool show_help) noexcept {
@@ -365,7 +368,7 @@ static std::wstring gbk_to_u16(const char *str) {
             apply_text_quake_colors(prompt_prefix, chat_input_x, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
 		
 		
-	bool is_chinese = false;
+	
             // Draw the entered text
             auto u16_chat_buffer = u8_to_u16(chat_input_buffer.c_str());
             apply_text_quake_colors(u16_chat_buffer, chat_input_x + x_offset_text_buffer, adjusted_y, chat_input_w, line_height, chat_input_color, chat_input_font, chat_input_anchor);
@@ -827,7 +830,7 @@ extern const std::string& get_console_text_temp();
                 else if(key_code == 0x38) {
                     if(num_bytes > 0 && server_type() != ServerType::SERVER_NONE){
                         chat_out(chat_input_channel, chat_input_buffer.c_str());
-                        chat_out(chat_input_channel, gbk_to_u16(chat_input_buffer.c_str()));
+                        chat_out(chat_input_channel, gbk_to_u16(chat_input_buffer.c_str()).c_str());
 		    }
                     chat_input_open = false;
                     chat_open_state_changed = clock::now();
