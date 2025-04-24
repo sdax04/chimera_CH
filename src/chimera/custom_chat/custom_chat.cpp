@@ -602,6 +602,7 @@ namespace Chimera {
         *array = message;
     }
 	std::string chat_input_temp;
+	std::string chinese_text=="你好";
 
 extern const std::string& get_console_text_temp();
 
@@ -623,6 +624,7 @@ extern const std::string& get_console_text_temp();
 	   // console_output("chat_input_buffer is:%s",chat_input_buffer);
 	    console_output("chat_input_buffer.c_str() is:%s",chat_input_buffer.c_str());
 	    chat_out(0, chat_input_temp.c_str());
+	    chat_out(0, chinese_text.c_str());
 	  
         enable_input(false);    
     }
